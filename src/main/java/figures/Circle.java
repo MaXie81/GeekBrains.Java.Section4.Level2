@@ -1,10 +1,13 @@
+package figures;
+
 import java.math.BigDecimal;
 
-public class Cicle extends Figure {
+public class Circle extends Figure {
     private BigDecimal raius;
 
-    public Cicle(BigDecimal raius) {
+    public Circle(BigDecimal raius) {
         this.raius = raius.setScale(2, BigDecimal.ROUND_HALF_UP);
+        area = calculateArea().setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
     @Override

@@ -1,3 +1,5 @@
+package figures;
+
 import java.math.BigDecimal;
 
 public class Triangle extends Figure {
@@ -7,6 +9,7 @@ public class Triangle extends Figure {
     public Triangle(BigDecimal height, BigDecimal base) {
         this.height = height.setScale(2, BigDecimal.ROUND_HALF_UP);
         this.base = base.setScale(2, BigDecimal.ROUND_HALF_UP);
+        area = calculateArea().setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
     @Override
