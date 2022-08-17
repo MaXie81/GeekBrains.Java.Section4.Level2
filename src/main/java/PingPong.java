@@ -1,19 +1,31 @@
 public class PingPong implements Runnable{
-    private final EnumPingPong word;
+    private State state;
+    private EnumPingPong isPing;
 
-    public PingPong(boolean isPing) {
-        word = isPing ? EnumPingPong.PING : EnumPingPong.PONG;
+    public PingPong(State state, EnumPingPong isPing) {
+        this.state = state;
+        this.isPing = isPing;
     }
 
     @Override
     public void run() {
         for (int i = 0; i < 5; i++) {
-            try {
-                Thread.sleep(1000);
-                System.out.println(word.getValue());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            while (true) {
+                synchronized (state) {
+                    if (state.getValue() != isPing) {
+                        state.turn();
+                        isPing = state.getValue();
+                        System.out.println(isPing.getValue());
+                        break;
+                    }
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+
         }
     }
 }
