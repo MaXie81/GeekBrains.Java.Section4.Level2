@@ -1,4 +1,6 @@
-public class Test {
+import java.util.concurrent.locks.ReentrantLock;
+
+public class Test1 {
     public static void main(String[] args) throws InterruptedException {
         State state = new State();
         Thread ping = new Thread(new PingPong(state, EnumPingPong.PING));
