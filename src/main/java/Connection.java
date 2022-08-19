@@ -63,7 +63,7 @@ public class Connection {
     private final String sql_insert_tickets = "INSERT INTO TAB_TICKETS(ID_SESSION, ID_SEAT) VALUES"
             + "(3, 10), (6, 31), (6, 32), (7, 23), (7, 8), (8, 4), (8, 44), (9, 15)";
 
-    private final String sql_select_error = 
+    private final String sql_select =
             "WITH \n" +
             "SRC_0x AS (\n" +
             "   SELECT \n" +
@@ -90,11 +90,12 @@ public class Connection {
             "       F.NAME                                      AS NAME_NEXT,\n" +
             "       S.DURATION,\n" +
             "       F.DURATION                                  AS DURATION_NEXT,\n" +
-            "       F.START_TIME_IN_MIN - S.START_TIME_IN_MIN   AS INTERVAL_\n" +
+            "       F.START_TIME_IN_MIN - S.START_TIME_IN_MIN - S.DURATION  AS PAUSE\n" +
             "   FROM SRC_0x F\n" +
             "   LEFT JOIN SRC_0x S\n" +
             "       ON F.ID_SESSION = S.ID_SESSION_NEXT\n" +
-            ")\n" +
+            ")\n";
+    private final String sql_error =
             "SELECT\n" +
             "   NAME,\n" +
             "   ID_TIME                                         AS BEGIN_TIME,\n" +
@@ -103,7 +104,18 @@ public class Connection {
             "   ID_TIME_NEXT                                    AS BEGIN_TIME_NEXT,\n" +
             "   DURATION_NEXT                                   AS DURATION_NEXT\n" +
             "FROM SRC \n" +
-            "WHERE INTERVAL_ < DURATION";
+            "WHERE PAUSE < 0\n" +
+            "ORDER BY BEGIN_TIME";
+    private final String sql_ok =
+            "SELECT\n" +
+            "   NAME,\n" +
+            "   ID_TIME                                         AS BEGIN_TIME,\n" +
+            "   DURATION,\n" +
+            "   ID_TIME_NEXT                                    AS BEGIN_TIME_NEXT,\n" +
+            "   PAUSE\n" +
+            "FROM SRC \n" +
+            "WHERE PAUSE > 0\n" +
+            "ORDER BY PAUSE DESC, BEGIN_TIME";
 
     private java.sql.Connection connection;
     private Statement sqlQuery;
@@ -148,7 +160,7 @@ public class Connection {
             sqlQuery.execute(sql_insert_tickets);
             sqlQuery.getConnection().commit();
 
-            dataQuery = sqlQuery.executeQuery(sql_select_error);
+            dataQuery = sqlQuery.executeQuery(sql_select + sql_error);
 
             while (dataQuery.next()) {
                 System.out.print(dataQuery.getString("NAME") + " ");
@@ -159,6 +171,20 @@ public class Connection {
                 System.out.print(dataQuery.getInt("DURATION_NEXT") + " ");
                 System.out.println( );
             }
+            System.out.println();
+
+            dataQuery = sqlQuery.executeQuery(sql_select + sql_ok);
+
+            while (dataQuery.next()) {
+                System.out.print(dataQuery.getString("NAME") + " ");
+                System.out.print(dataQuery.getInt("BEGIN_TIME") + " ");
+                System.out.print(dataQuery.getInt("DURATION") + " ");
+                System.out.print(dataQuery.getInt("BEGIN_TIME_NEXT") + " ");
+//                System.out.print(dataQuery.getInt("DURATION_NEXT") + " ");
+                System.out.print(dataQuery.getInt("PAUSE") + " ");
+                System.out.println( );
+            }
+            System.out.println( );
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
