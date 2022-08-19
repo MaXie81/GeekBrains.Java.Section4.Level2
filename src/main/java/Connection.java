@@ -63,6 +63,48 @@ public class Connection {
     private final String sql_insert_tickets = "INSERT INTO TAB_TICKETS(ID_SESSION, ID_SEAT) VALUES"
             + "(3, 10), (6, 31), (6, 32), (7, 23), (7, 8), (8, 4), (8, 44), (9, 15)";
 
+    private final String sql_select_error = 
+            "WITH \n" +
+            "SRC_0x AS (\n" +
+            "   SELECT \n" +
+            "       S.*,\n" +
+            "       S.ID_TIME *60                               AS START_TIME_IN_MIN,\n" +
+            "       F.NAME,\n" +
+            "       F.DURATION,\n" +
+            "       (\n" +
+            "           SELECT MIN(ID_SESSION) \n" +
+            "           FROM TAB_SESSIONS F \n" +
+            "           WHERE F.ID_SESSION > S.ID_SESSION\n" +
+            "       )                                           AS ID_SESSION_NEXT \n" +
+            "   FROM TAB_SESSIONS S\n" +
+            "   JOIN TAB_FILMS F\n" +
+            "       ON S.ID_FILM= F.ID_FILM\n" +
+            ")\n" +
+            ", SRC AS (\n" +
+            "   SELECT\n" +
+            "       S.ID_SESSION,\n" +
+            "       F.ID_SESSION                                AS ID_SESSION_NEXT,\n" +
+            "       S.ID_TIME,\n" +
+            "       F.ID_TIME                                   AS ID_TIME_NEXT,\n" +
+            "       S.NAME,\n" +
+            "       F.NAME                                      AS NAME_NEXT,\n" +
+            "       S.DURATION,\n" +
+            "       F.DURATION                                  AS DURATION_NEXT,\n" +
+            "       F.START_TIME_IN_MIN - S.START_TIME_IN_MIN   AS INTERVAL_\n" +
+            "   FROM SRC_0x F\n" +
+            "   LEFT JOIN SRC_0x S\n" +
+            "       ON F.ID_SESSION = S.ID_SESSION_NEXT\n" +
+            ")\n" +
+            "SELECT\n" +
+            "   NAME,\n" +
+            "   ID_TIME                                         AS BEGIN_TIME,\n" +
+            "   DURATION,\n" +
+            "   NAME_NEXT,\n" +
+            "   ID_TIME_NEXT                                    AS BEGIN_TIME_NEXT,\n" +
+            "   DURATION_NEXT                                   AS DURATION_NEXT\n" +
+            "FROM SRC \n" +
+            "WHERE INTERVAL_ < DURATION";
+
     private java.sql.Connection connection;
     private Statement sqlQuery;
     private ResultSet dataQuery;
@@ -91,7 +133,6 @@ public class Connection {
             sqlQuery.execute(sql_create_table_day);
             sqlQuery.execute(sql_create_table_sessions);
             sqlQuery.execute(sql_create_table_tickets);
-
         } catch (SQLException exception) {
             System.out.println("???");
             exception.printStackTrace();
@@ -106,6 +147,18 @@ public class Connection {
             sqlQuery.execute(sql_insert_sessions);
             sqlQuery.execute(sql_insert_tickets);
             sqlQuery.getConnection().commit();
+
+            dataQuery = sqlQuery.executeQuery(sql_select_error);
+
+            while (dataQuery.next()) {
+                System.out.print(dataQuery.getString("NAME") + " ");
+                System.out.print(dataQuery.getInt("BEGIN_TIME") + " ");
+                System.out.print(dataQuery.getInt("DURATION") + " ");
+                System.out.print(dataQuery.getString("NAME_NEXT") + " ");
+                System.out.print(dataQuery.getInt("BEGIN_TIME_NEXT") + " ");
+                System.out.print(dataQuery.getInt("DURATION_NEXT") + " ");
+                System.out.println( );
+            }
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
