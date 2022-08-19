@@ -4,6 +4,7 @@ public class Test {
         connection.open();
         connection.init();
         connection.initData();
+        connection.getDataQuery();
         connection.close();
     }
 }

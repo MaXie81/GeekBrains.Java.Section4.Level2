@@ -114,7 +114,7 @@ public class Connection {
             "   ID_TIME_NEXT                                    AS BEGIN_TIME_NEXT,\n" +
             "   PAUSE\n" +
             "FROM SRC \n" +
-            "WHERE PAUSE > 0\n" +
+            "WHERE PAUSE >= 30\n" +
             "ORDER BY PAUSE DESC, BEGIN_TIME";
 
     private java.sql.Connection connection;
@@ -146,7 +146,6 @@ public class Connection {
             sqlQuery.execute(sql_create_table_sessions);
             sqlQuery.execute(sql_create_table_tickets);
         } catch (SQLException exception) {
-            System.out.println("???");
             exception.printStackTrace();
         }
     }
@@ -159,16 +158,22 @@ public class Connection {
             sqlQuery.execute(sql_insert_sessions);
             sqlQuery.execute(sql_insert_tickets);
             sqlQuery.getConnection().commit();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+    }
 
+    public void getDataQuery() {
+        try {
             dataQuery = sqlQuery.executeQuery(sql_select + sql_error);
 
             while (dataQuery.next()) {
-                System.out.print(dataQuery.getString("NAME") + " ");
+                System.out.print("\"" + dataQuery.getString("NAME") + "\" ");
                 System.out.print(dataQuery.getInt("BEGIN_TIME") + " ");
                 System.out.print(dataQuery.getInt("DURATION") + " ");
-                System.out.print(dataQuery.getString("NAME_NEXT") + " ");
+                System.out.print("\"" + dataQuery.getString("NAME_NEXT") + "\" ");
                 System.out.print(dataQuery.getInt("BEGIN_TIME_NEXT") + " ");
-                System.out.print(dataQuery.getInt("DURATION_NEXT") + " ");
+                System.out.print(dataQuery.getInt("DURATION_NEXT"));
                 System.out.println( );
             }
             System.out.println();
@@ -176,12 +181,11 @@ public class Connection {
             dataQuery = sqlQuery.executeQuery(sql_select + sql_ok);
 
             while (dataQuery.next()) {
-                System.out.print(dataQuery.getString("NAME") + " ");
+                System.out.print("\"" + dataQuery.getString("NAME") + " \" ");
                 System.out.print(dataQuery.getInt("BEGIN_TIME") + " ");
                 System.out.print(dataQuery.getInt("DURATION") + " ");
                 System.out.print(dataQuery.getInt("BEGIN_TIME_NEXT") + " ");
-//                System.out.print(dataQuery.getInt("DURATION_NEXT") + " ");
-                System.out.print(dataQuery.getInt("PAUSE") + " ");
+                System.out.print(dataQuery.getInt("PAUSE"));
                 System.out.println( );
             }
             System.out.println( );
