@@ -36,17 +36,32 @@ public class Connection {
             "CREATE TABLE TAB_SESSIONS("
             + "ID_SESSION BIGSERIAL PRIMARY KEY,"
             + "ID_FILM BIGINT REFERENCES TAB_FILMS(ID_FILM),"
-            + "ID_DAY BIGINT REFERENCES TAB_DIC_DAY(ID_DAY),"
+            + "ID_DAY VARCHAR2(3 CHAR) REFERENCES TAB_DIC_DAY(ID_DAY),"
             + "ID_TIME BIGINT REFERENCES TAB_DIC_TIME(ID_TIME)"
             + ")";
     private final String sql_create_table_tickets =
             "CREATE TABLE TAB_TICKETS("
             + "ID_TICKET BIGSERIAL PRIMARY KEY,"
-            + "ID_FILM BIGINT REFERENCES TAB_FILMS(ID_FILM),"
-            + "ID_SESSION BIGINT REFERENCES TAB_SESSIONS(ID_SESSION)"
+            + "ID_SESSION BIGINT REFERENCES TAB_SESSIONS(ID_SESSION),"
+            + "ID_SEAT SMALLINT"
             + ")";
 
-    private final String sql_select_count_films = "SELECT COUNT(*) AS CNT FROM PUBLIC.TAB_FILMS";
+    private final String sql_insert_times = "INSERT INTO TAB_DIC_TIME VALUES"
+            + "(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0),"
+            + "(23, 1), (8, 1), (9, 1), (10, 1), (11, 1), (12, 1), (13, 1), (14, 1), (15, 1), (16, 1),"
+            + "(17, 2), (18, 2), (19, 2), (20, 2), (21, 2), (22, 2)";
+    private final String sql_insert_days = "INSERT INTO TAB_DIC_DAY VALUES"
+            + "('ПНД', 0), ('ВТР', 0), ('СРД', 0), ('ЧТВ', 0), ('ПТН', 0), ('СБТ', 1), ('ВСК', 1)";
+    private final String sql_insert_films = "INSERT INTO TAB_FILMS VALUES"
+            + "(1, 'Матрица', 150, 450.00),"
+            + "(2, 'Терминатор', 120, 400.00),"
+            + "(3, 'Аватар', 180, 550.00),"
+            + "(4, 'Пятый элемент', 90, 300.00)";
+    private final String sql_insert_sessions = "INSERT INTO TAB_SESSIONS(ID_FILM, ID_DAY, ID_TIME) VALUES"
+            + "(4, 'СРД', 0), (4, 'СРД', 3), (2, 'СРД', 4), (1, 'СРД', 6), (3, 'СРД', 10),"
+            + "(1, 'СРД', 12), (2, 'СРД', 15), (3, 'СРД', 17), (1, 'СРД', 21)";
+    private final String sql_insert_tickets = "INSERT INTO TAB_TICKETS(ID_SESSION, ID_SEAT) VALUES"
+            + "(3, 10), (6, 31), (6, 32), (7, 23), (7, 8), (8, 4), (8, 44), (9, 15)";
 
     private java.sql.Connection connection;
     private Statement sqlQuery;
@@ -57,6 +72,7 @@ public class Connection {
             Class.forName(DRIVER);
             connection = DriverManager.getConnection(URL, username, password);
             connection.setAutoCommit(false);
+            sqlQuery = connection.createStatement();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -64,8 +80,6 @@ public class Connection {
 
     public void init() {
         try {
-            sqlQuery = connection.createStatement();
-
             sqlQuery.execute(sql_drop_table_tickets);
             sqlQuery.execute(sql_drop_table_sessions);
             sqlQuery.execute(sql_drop_table_day);
@@ -78,9 +92,21 @@ public class Connection {
             sqlQuery.execute(sql_create_table_sessions);
             sqlQuery.execute(sql_create_table_tickets);
 
-//            dataQuery = sqlQuery.executeQuery(sql_select_count_films);
         } catch (SQLException exception) {
             System.out.println("???");
+            exception.printStackTrace();
+        }
+    }
+
+    public void initData() {
+        try {
+            sqlQuery.execute(sql_insert_times);
+            sqlQuery.execute(sql_insert_days);
+            sqlQuery.execute(sql_insert_films);
+            sqlQuery.execute(sql_insert_sessions);
+            sqlQuery.execute(sql_insert_tickets);
+            sqlQuery.getConnection().commit();
+        } catch (SQLException exception) {
             exception.printStackTrace();
         }
     }

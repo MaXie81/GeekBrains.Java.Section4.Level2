@@ -3,6 +3,7 @@ public class Test {
         Connection connection = new Connection();
         connection.open();
         connection.init();
+        connection.initData();
         connection.close();
     }
 }
