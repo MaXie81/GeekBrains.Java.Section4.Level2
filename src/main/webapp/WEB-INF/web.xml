@@ -6,14 +6,14 @@
 
   <display-name>GeekBrains Java Section4 Level2 Lesson6</display-name>
 
-  <servlet>
-    <servlet-name>ServletHelloWorld</servlet-name>
-    <servlet-class>Servlet.ServletHelloWorld</servlet-class>
-  </servlet>
+<!--  <servlet>-->
+<!--    <servlet-name>ServletHelloWorld</servlet-name>-->
+<!--    <servlet-class>Servlet.ServletHelloWorld</servlet-class>-->
+<!--  </servlet>-->
 
-  <servlet-mapping>
-    <servlet-name>ServletHelloWorld</servlet-name>
-    <url-pattern>/ServletHelloWorld/HelloWorld</url-pattern>
-  </servlet-mapping>
+<!--  <servlet-mapping>-->
+<!--    <servlet-name>ServletHelloWorld</servlet-name>-->
+<!--    <url-pattern>/ServletHelloWorld</url-pattern>-->
+<!--  </servlet-mapping>-->
 
 </web-app>

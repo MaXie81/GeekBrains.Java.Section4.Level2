@@ -7,13 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "ServletHelloWorld", urlPatterns = "HelloWorld")
+@WebServlet(name = "ServletHelloWorld", urlPatterns = "/ServletHelloWorld")
 public class ServletHelloWorld extends HttpServlet {
-    @Override
-    public void init() throws ServletException {
-        //
-    }
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");
