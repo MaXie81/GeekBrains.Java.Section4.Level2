@@ -1,0 +1,1 @@
+INSERT INTO STUDENT(NAME, AGE) VALUES('Петров', 19), ('Сидорова', 18), ('Куприянов', 20);
