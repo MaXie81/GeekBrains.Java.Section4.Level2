@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+            rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+            crossorigin="anonymous"
+    >
+    <title>Информация о студенте</title>
+</head>
+<body>
+<div class="container-sm" >
+    <div class="col-6">
+        <form class="row g-2">
+            <legend>Студент</legend>
+            <div class="col-12" >
+                <label for="Id" class="form-label"><b>Id</b></label>
+                <input type="text" id="Id" class="form-control" th:value="${student.id}" readonly>
+            </div>
+            <div class="col-12">
+                <label for="title" class="form-label"><b>Имя</b></label>
+                <input type="text" id="title" class="form-control" th:value="${student.name}" readonly>
+            </div>
+            <div class="col-12">
+                <label for="Cost" class="form-label"><b>Возраст</b></label>
+                <input type="text" id="Cost" class="form-control" th:value="${student.age}" readonly>
+            </div>
+            <div class="col-12 mt-3">
+                <a type="button" class="btn btn-primary" th:href=@{'/'}>Назад</a>
+                <a type="button" class="btn btn-danger"  th:href="@{'/delete/' + ${student.id}}">Удалить</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
